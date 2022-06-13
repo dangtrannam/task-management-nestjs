@@ -10,14 +10,20 @@ import {
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Auth } from './entities/auth.entity';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
-  signUp(@Body() createAuthDto: CreateAuthDto) {
+  signUp(@Body() createAuthDto: CreateAuthDto): Promise<Auth> {
     return this.authService.create(createAuthDto);
+  }
+
+  @Post('/signin')
+  signIn(@Body() createAuthDto: CreateAuthDto): Promise<Auth> {
+    return this.authService.signIn(createAuthDto);
   }
 
   @Get()
