@@ -10,7 +10,7 @@ import { Auth } from './entities/auth.entity';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(Auth)
-    private authRepository: Repository<Auth>,
+    private readonly authRepository: Repository<Auth>,
   ) {
     super({
       secretOrKey: 'topSecret51',
@@ -18,13 +18,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload) {
+  async validate(payload: JwtPayload): Promise<Auth> {
     const { username } = payload;
-    const user = await this.authRepository.findOne({ where: { username } });
-    if (!user) {
+    const auth = await this.authRepository.findOne({ where: { username } });
+    if (!auth) {
       throw new UnauthorizedException();
     }
-
-    return user;
+    return auth;
   }
 }

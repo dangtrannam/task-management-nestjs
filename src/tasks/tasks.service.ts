@@ -1,3 +1,4 @@
+import { Auth } from './../auth/entities/auth.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -41,12 +42,13 @@ export class TasksService {
     return task;
   }
 
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+  async createTask(createTaskDto: CreateTaskDto, user: Auth): Promise<Task> {
     const { title, description } = createTaskDto;
     const task = this.tasksRepository.create({
       title,
       description,
       status: TaskStatus.OPEN,
+      user,
     });
     await this.tasksRepository.save(task);
     return task;

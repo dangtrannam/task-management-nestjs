@@ -21,19 +21,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async create(createAuthDto: CreateAuthDto): Promise<Auth> {
+  async create(createAuthDto: CreateAuthDto) {
     const { username, password } = createAuthDto;
 
     //hash
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
-
     const auth = this.authRepository.create({
       username,
       password: hashedPassword,
     });
     try {
-      return this.authRepository.save(auth);
+      await this.authRepository.save(auth);
     } catch (error) {
       if (error.code === '23505') {
         // duplicate username
@@ -55,12 +54,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid username or password');
     }
     const payload: JwtPayload = { username };
-    const accessToken: string = this.jwtService.sign(payload);
+    const accessToken: string = await this.jwtService.sign(payload);
     return { accessToken };
   }
 
   findAll() {
-    return `This action returns all auth`;
+    return this.authRepository.find({});
   }
 
   findOne(id: string) {
