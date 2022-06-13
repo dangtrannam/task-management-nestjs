@@ -22,7 +22,9 @@ export class AuthController {
   }
 
   @Post('/signin')
-  signIn(@Body() createAuthDto: CreateAuthDto): Promise<Auth> {
+  signIn(
+    @Body() createAuthDto: CreateAuthDto,
+  ): Promise<{ accessToken: string }> {
     return this.authService.signIn(createAuthDto);
   }
 

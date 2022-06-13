@@ -10,12 +10,15 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { Auth } from './entities/auth.entity';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Auth)
     private readonly authRepository: Repository<Auth>,
+    private jwtService: JwtService,
   ) {}
 
   async create(createAuthDto: CreateAuthDto): Promise<Auth> {
@@ -41,7 +44,7 @@ export class AuthService {
     }
   }
 
-  async signIn(createAuthDto: CreateAuthDto): Promise<Auth> {
+  async signIn(createAuthDto: CreateAuthDto): Promise<{ accessToken: string }> {
     const { username, password } = createAuthDto;
     const auth = await this.authRepository.findOne({ where: { username } });
     if (!auth) {
@@ -51,7 +54,9 @@ export class AuthService {
     if (!isValid) {
       throw new UnauthorizedException('Invalid username or password');
     }
-    return auth;
+    const payload: JwtPayload = { username };
+    const accessToken: string = this.jwtService.sign(payload);
+    return { accessToken };
   }
 
   findAll() {
