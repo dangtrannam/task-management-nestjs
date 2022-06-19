@@ -13,12 +13,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
+        const isProduction = configService.get('STAGE') === 'prod';
         const dbHost = configService.get('DB_HOST');
         const dbPort = configService.get('DB_PORT');
         const dbUser = configService.get('DB_USER');
         const dbPassword = configService.get('DB_PASSWORD');
         const dbName = configService.get('DB_NAME');
         return {
+          ssl: isProduction,
+          extra: {
+            ssl: isProduction ? { rejectUnauthorized: false } : null,
+          },
           type: 'postgres',
           autoLoadEntities: true,
           synchronize: true,
