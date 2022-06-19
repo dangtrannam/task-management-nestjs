@@ -71,3 +71,14 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+### Docker
+
+Then execute the docker-compose up command. All dependencies are downloaded and started automatically. PgAdmin will be accessible on the http://localhost with the PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD. You can connect to the database server from PgAdmin with the following values:
+
+Host name/address: postgres
+Port: 5432
+Username: postgres
+Password: nestjscourse
+
+In the NestJs app the host remains localhost.
